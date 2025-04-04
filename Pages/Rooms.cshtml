@@ -1,0 +1,65 @@
+﻿@page
+@using DSV_Book_a_room.Models
+@model DSV_Book_a_room.Pages.Rooms.RoomsModel
+@{
+    ViewData["Title"] = "Booking Form";
+    <h2>Booking Form</h2>
+
+    <form method="post">
+        <div>
+            <label>Start time</label>
+            <input class="form-control" asp-for="StartTime" />
+        </div>
+        <div>
+            <label>End time</label>
+            <input class="form-control" asp-for="EndTime" />
+        </div>
+        <div>
+            <label>Filter Seats</label>
+            <input class="form-control" asp-for="FilterSeats" />
+        </div>
+        <div>
+            <label>Filter Equipment</label>
+            <select class="form-control" asp-for="FilterEquipment" asp-items="Html.GetEnumSelectList<EquipmentEnum>()">
+                <option value="">--Choose--</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+    </form>
+
+
+    <table>
+
+    <thead>
+    <tr>
+    <th>Name</th>
+    <th>Seating</th>
+    <th>Equipment</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+            <div>@Model.FilterSeats</div>
+            <div>@Model.rooms.Count</div>
+    @foreach (Room room in Model.rooms)
+    {
+                
+        @if(Model.FilterSeats<=room.Seating && room.Equipment.Contains(Model.FilterEquipment)){
+            <tr>
+                <td>
+                    @room.Name
+                </td>
+                <td>
+                    @room.Seating
+                </td>
+                <td>
+                    @string.Join(", ",room.Equipment.Select(e =>e.ToString()))
+                </td>
+            </tr>
+
+        }
+    }
+    </tbody>
+    </table>
+}
+
