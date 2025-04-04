@@ -1,0 +1,20 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevents horizontal & vertical scrolling */
+    display: flex;
+    justify-content: center; /* Centers the content horizontally */
+    align-items: center; /* Centers the content vertically */
+    height: 100vh; /* Makes the page fill the viewport height */
+    width: 100vw; /* Makes the page fill the viewport width */
+}
+
+.image-normal {
+    display: block;
+    margin: auto;
+    max-width: 60vw; /* Limits width to 60% of the screen */
+    max-height: 60vh; /* Limits height to 60% of the screen */
+    width: auto /* Keeps the natural width */
+    height: auto; /* Maintains aspect ratio */
+    object-fit: contain; /* Ensures the full image is visible */
+}
