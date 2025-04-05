@@ -3,63 +3,73 @@
 @model DSV_Book_a_room.Pages.Rooms.RoomsModel
 @{
     ViewData["Title"] = "Booking Form";
-    <h2>Booking Form</h2>
+}
+<h2>Booking Form</h2>
 
-    <form method="post">
-        <div>
-            <label>Start time</label>
-            <input class="form-control" asp-for="StartTime" />
-        </div>
-        <div>
-            <label>End time</label>
-            <input class="form-control" asp-for="EndTime" />
-        </div>
-        <div>
-            <label>Filter Seats</label>
-            <input class="form-control" asp-for="FilterSeats" />
-        </div>
-        <div>
-            <label>Filter Equipment</label>
-            <select class="form-control" asp-for="FilterEquipment" asp-items="Html.GetEnumSelectList<EquipmentEnum>()">
-                <option value="">--Choose--</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Apply Filters</button>
-    </form>
+<form method="post" asp-page-handler="FilterRooms">
+    <div>
+        <label style="">Start time</label>
+        <input class="form-control" asp-for="StartTime" />
+    </div>
+    <div>
+        <label>End time</label>
+        <input class="form-control" asp-for="EndTime" />
+    </div>
+    <div>
+        <label>Filter Seats</label>
+        <input class="form-control" asp-for="FilterSeats" />
+    </div>
+    <div>
+        <label>Filter Equipment</label>
+        <select class="form-control" asp-for="FilterEquipment" asp-items="Html.GetEnumSelectList<EquipmentEnum>()">
+            <option value="">--Choose--</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Apply Filters</button>
+</form>
 
-
-    <table>
-
+<table>
     <thead>
-    <tr>
-    <th>Name</th>
-    <th>Seating</th>
-    <th>Equipment</th>
-    </tr>
+        <tr>
+            <th>Room name</th>
+            <th>Seating</th>
+            <th>Equipment</th>
+            <th>Book description</th>
+        </tr>
     </thead>
-    
-    <tbody>
-            <div>@Model.FilterSeats</div>
-            <div>@Model.rooms.Count</div>
-    @foreach (Room room in Model.rooms)
-    {
-                
-        @if(Model.FilterSeats<=room.Seating && room.Equipment.Contains(Model.FilterEquipment)){
-            <tr>
-                <td>
-                    @room.Name
-                </td>
-                <td>
-                    @room.Seating
-                </td>
-                <td>
-                    @string.Join(", ",room.Equipment.Select(e =>e.ToString()))
-                </td>
-            </tr>
 
+    <tbody>
+        @foreach (Room room in Model.rooms)
+        {
+            <form method="post" asp-page-handler="BookRooms" asp-route-id="@room.Id">
+            <tr>
+                    <td>
+                        @room.Name
+                    </td>
+                    <td>
+                        @room.Seating
+                    </td>
+                    <td>
+                        @string.Join(", ",room.Equipment.Select(e =>e.ToString()))
+                    </td>
+                    <td>
+                    <input class="form-control" asp-for="BookingDescription"/>
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-primary">Book room</button>
+                    </td>
+                </tr>
+            </form>
         }
-    }
     </tbody>
-    </table>
+</table>
+
+@* This is the popup that will be shown when the action is completed successfully *@
+@if (Model.ShowPopup)
+{
+    <script>
+        alert("Booking completed successfully!");
+    </script>
+
 }
 
