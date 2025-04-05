@@ -4,12 +4,12 @@
     ViewData["Title"] = "Bookings Page";
 }
 
-<h2>Bookings</h2>
+<h2 style="font-family: Verdana, regular">Bookings</h2>
 
-<table>
+<table class="table mt-5" style="font-family: Verdana, regular">
     <thead>
         <tr>
-            <th>Room Name</th>
+            <th style="font-family: Verdana, regular">Room Name</th>
             <th>StartTime</th>
             <th>EndTime</th>
             <th>Book description</th>
@@ -26,7 +26,7 @@
                 <td>@booking.Description</td>
                 <td>
                     <form method="post" asp-page-handler="DeleteBooking" asp-route-id="@booking.BookingId">
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger" style="font-family: Verdana, regular">Delete</button>
                     </form>
                 </td>
             </tr>

@@ -33,6 +33,9 @@ namespace DSV_Book_a_room.Pages.Rooms
         [BindProperty]
         public string BookingDescription { get; set; }
 
+        [BindProperty]
+        public bool ShowRooms { get; set; }
+
         public List<Room> rooms = new List<Room>();
         public List<Booking> bookings = new List<Booking>();
 
@@ -45,6 +48,7 @@ namespace DSV_Book_a_room.Pages.Rooms
             {
                 _context.Rooms.Add(new Room("Room A", 20, new List<EquipmentEnum> { EquipmentEnum.Whiteboard, EquipmentEnum.Projektor }));
                 _context.Rooms.Add(new Room("Room B", 10, new List<EquipmentEnum> { EquipmentEnum.Teams_intergration, EquipmentEnum.Projektor }));
+                _context.Rooms.Add(new Room("Room C", 5, new List<EquipmentEnum> { EquipmentEnum.Teams_intergration}));
 
                 _context.SaveChanges();
             }
@@ -53,6 +57,7 @@ namespace DSV_Book_a_room.Pages.Rooms
 
         public IActionResult OnPostFilterRooms()
         {
+            ShowRooms = true;
             PopulateRooms();
             return Page();
         }
@@ -65,6 +70,7 @@ namespace DSV_Book_a_room.Pages.Rooms
                 _context.Bookings.Add(new Booking(StartTime, EndTime, room.Id, BookingDescription));
                 _context.SaveChanges();
                 ShowPopup = true;
+                ShowRooms = false;
             }
 
             PopulateRooms();
@@ -74,11 +80,18 @@ namespace DSV_Book_a_room.Pages.Rooms
         private void PopulateRooms()
         {
             var query = _context.Rooms.AsQueryable();
+            var queryBookings = _context.Bookings.AsQueryable();
 
             // Filter and only keep the rooms with more a same amount of seats
             query = query.Where(room => room.Seating >= FilterSeats);
             // Filter and only keep the rooms that contain the equipment that is filtered for.
             query = query.Where(room => room.Equipment.Contains(FilterEquipment));
+
+            //Filter for all the bookings that is coliding with our booking time frame we want
+            queryBookings = queryBookings.Where(booking => booking.StartTime <= EndTime && StartTime <= booking.EndTime);
+
+            //Filter out any room that has the same room id as the querybookings, as those booking are overlapping our desired booking.
+            query = query.Where(room => queryBookings.First(booking => booking.RoomId == room.Id) == null);
 
             // put our query into the rooms list for the webpage to view.
             rooms = query.ToList();

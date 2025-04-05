@@ -4,31 +4,34 @@
 @{
     ViewData["Title"] = "Booking Form";
 }
-<h2>Booking Form</h2>
+<h2 style="font-family: Verdana, regular">Booking Form</h2>
 
-<form method="post" asp-page-handler="FilterRooms">
-    <div>
-        <label style="">Start time</label>
+<form method="post" asp-page-handler="FilterRooms" class="col-sm-6">
+    <div class="mt-3">
+        <label class="col-form-label-lg" style="font-family: Verdana, regular">Start time</label>
         <input class="form-control" asp-for="StartTime" />
     </div>
-    <div>
-        <label>End time</label>
+    <div class ="mt-3">
+        <label class="col-form-label-lg" style="font-family: Verdana, regular">End time</label>
         <input class="form-control" asp-for="EndTime" />
     </div>
-    <div>
-        <label>Filter Seats</label>
+    <div class="mt-3">
+        <label class="col-form-label-lg" style="font-family: Verdana, regular">Filter Seats</label>
         <input class="form-control" asp-for="FilterSeats" />
     </div>
-    <div>
-        <label>Filter Equipment</label>
+    <div class="mt-3">
+        <label class="col-form-label-lg" style="font-family: Verdana, regular">Filter Equipment</label>
         <select class="form-control" asp-for="FilterEquipment" asp-items="Html.GetEnumSelectList<EquipmentEnum>()">
             <option value="">--Choose--</option>
         </select>
     </div>
-    <button type="submit" class="btn btn-primary">Apply Filters</button>
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary" style="font-family: Verdana, regular">Find rooms</button>
+    </div>
 </form>
 
-<table>
+@if(Model.ShowRooms){
+    <table class="table mt-5" style="font-family: Verdana, regular">
     <thead>
         <tr>
             <th>Room name</th>
@@ -56,20 +59,21 @@
                     <input class="form-control" asp-for="BookingDescription"/>
                     </td>
                     <td>
-                        <button type="submit" class="btn btn-primary">Book room</button>
+                        <button type="submit" class="btn btn-primary" style="font-family: Verdana, regular">Book room</button>
                     </td>
                 </tr>
+            <input type="hidden" asp-for="StartTime" value="@Model.StartTime" />
+            <input type="hidden" asp-for="EndTime" value="@Model.EndTime" />
             </form>
         }
     </tbody>
 </table>
+}
 
 @* This is the popup that will be shown when the action is completed successfully *@
 @if (Model.ShowPopup)
 {
-    <script>
+    <script style="font-family: Verdana, regular">
         alert("Booking completed successfully!");
     </script>
-
 }
-

@@ -1,5 +1,6 @@
 ﻿body {
-    margin: 0;
+    font-family: Verdana, regular;
+    color: #495057;
     padding: 0;
     overflow: hidden;
     display: flex;
@@ -10,7 +11,14 @@
 }
 
 .center-image {
+    font-family: Verdana, regular;
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
+
+<style>
+    .custom-text-color {
+        color: #495057;
+    }
+</style>
