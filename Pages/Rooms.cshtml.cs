@@ -18,10 +18,10 @@ namespace DSV_Book_a_room.Pages.Rooms
             EndTime = DateTime.Now;
         }
 
-        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        [BindProperty, DisplayFormat(DataFormatString = "{0:dd-MM-yyyyTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime StartTime { get; set; }
 
-        [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+        [BindProperty, DisplayFormat(DataFormatString = "{0:dd-MM-yyyyTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime EndTime { get; set; }
 
         [BindProperty]
@@ -30,44 +30,60 @@ namespace DSV_Book_a_room.Pages.Rooms
         [BindProperty]
         public EquipmentEnum FilterEquipment { get; set; }
 
+        [BindProperty]
+        public string BookingDescription { get; set; }
+
         public List<Room> rooms = new List<Room>();
+        public List<Booking> bookings = new List<Booking>();
+
+        [BindProperty]
+        public bool ShowPopup { get; set; }
 
         public void OnGet()
         {
-            if (TempData.ContainsKey("StartTime"))
-            {
-                StartTime = (DateTime)TempData["StartTime"];
-            }
-            if (TempData.ContainsKey("EndTime"))
-            {
-                EndTime = (DateTime)TempData["EndTime"];
-            }
-            if (TempData.ContainsKey("FilterEquipment"))
-            {
-                FilterEquipment = (EquipmentEnum)TempData["FilterEquipment"];
-            }
-            if (TempData.ContainsKey("FilterSeats"))
-            {
-                FilterSeats = (int)TempData["FilterSeats"];
-            }
-
             if (!_context.Rooms.Any())
             {
-                _context.Add(new Room("Room A", 20, new List<EquipmentEnum> { EquipmentEnum.Whiteboard, EquipmentEnum.Projektor }));
-                _context.Add(new Room("Room B", 10, new List<EquipmentEnum> { EquipmentEnum.Teams_intergration, EquipmentEnum.Projektor }));
+                _context.Rooms.Add(new Room("Room A", 20, new List<EquipmentEnum> { EquipmentEnum.Whiteboard, EquipmentEnum.Projektor }));
+                _context.Rooms.Add(new Room("Room B", 10, new List<EquipmentEnum> { EquipmentEnum.Teams_intergration, EquipmentEnum.Projektor }));
 
                 _context.SaveChanges();
             }
-            rooms = _context.Rooms.ToList();
+            PopulateRooms();
         }
 
-        public IActionResult OnPost()
+        public IActionResult OnPostFilterRooms()
         {
-            TempData["StartTime"] = StartTime;
-            TempData["EndTime"] = EndTime;
-            TempData["FilterEquipment"] = FilterEquipment;
-            TempData["FilterSeats"] = FilterSeats;
-            return RedirectToPage();
+            PopulateRooms();
+            return Page();
+        }
+
+        public IActionResult OnPostBookRooms(int Id)
+        {
+            var room = _context.Rooms.Find(Id);
+            if (room != null && BookingDescription != null)
+            {
+                _context.Bookings.Add(new Booking(StartTime, EndTime, room.Id, BookingDescription));
+                _context.SaveChanges();
+                ShowPopup = true;
+            }
+
+            PopulateRooms();
+            return Page();
+        }
+
+        private void PopulateRooms()
+        {
+            var query = _context.Rooms.AsQueryable();
+
+            // Filter and only keep the rooms with more a same amount of seats
+            query = query.Where(room => room.Seating >= FilterSeats);
+            // Filter and only keep the rooms that contain the equipment that is filtered for.
+            query = query.Where(room => room.Equipment.Contains(FilterEquipment));
+
+            // put our query into the rooms list for the webpage to view.
+            rooms = query.ToList();
+
+            bookings = _context.Bookings.ToList();
         }
     }
 }
