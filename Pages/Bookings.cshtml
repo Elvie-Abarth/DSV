@@ -1,0 +1,35 @@
+﻿@page
+@model DSV_Book_a_room.Pages.BookingsModel
+@{
+    ViewData["Title"] = "Bookings Page";
+}
+
+<h2>Bookings</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Room Name</th>
+            <th>StartTime</th>
+            <th>EndTime</th>
+            <th>Book description</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (BookingViewModel booking in Model.bookings)
+        {
+            <tr>
+                <td>@booking.RoomName</td>
+                <td>@booking.StartTime</td>
+                <td>@booking.EndTime</td>
+                <td>@booking.Description</td>
+                <td>
+                    <form method="post" asp-page-handler="DeleteBooking" asp-route-id="@booking.BookingId">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
